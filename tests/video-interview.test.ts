@@ -1,0 +1,4 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {AnswerClock,NOVA_CLIPS,ANSWER_DURATIONS} from '../lib/video-interview';
+test('supplied clips retain ordered sources and default answer is ten seconds',()=>{assert.equal(ANSWER_DURATIONS[0],10);assert.deepEqual(NOVA_CLIPS.map(c=>c.src),[1,2,3].map(n=>`/nova-video/part${n}.mp4`));});
+test('answer time starts at playback end and expires exactly ten active seconds later',()=>{const c=new AnswerClock();c.start(10,10750);assert.equal(c.seconds(10750),10);assert.equal(c.seconds(20749),1);assert.equal(c.seconds(20750),0);});
+test('pause freezes answer countdown and resume preserves unconsumed time',()=>{const c=new AnswerClock();c.start(10,100);c.pause(3100);assert.equal(c.seconds(99999),7);c.resume(100000);assert.equal(c.seconds(106999),1);assert.equal(c.seconds(107000),0);});
